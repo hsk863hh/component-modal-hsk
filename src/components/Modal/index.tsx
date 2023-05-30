@@ -14,8 +14,8 @@ const CloseModalButton = styled(MdClose)`
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   z-index: 10;
 `;
@@ -73,7 +73,8 @@ const Modal: React.FC<ModalProps> = (props) => {
     wrapClassName,
     zIndex,
     onCancel,
-    onOk
+    onOk,
+    afterOpenChange
   } = props;
 
   const onClose = () => {
@@ -92,6 +93,10 @@ const Modal: React.FC<ModalProps> = (props) => {
   };
 
   useEffect(() => {
+    afterOpenChange?.(open)
+  }, [open])
+
+  useEffect(() => {
     const handlerKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
@@ -102,7 +107,7 @@ const Modal: React.FC<ModalProps> = (props) => {
     if (keyboard) {
       window.addEventListener("keydown", handlerKeyDown);
     }
-    return window.removeEventListener("keydown", handlerKeyDown);
+    return () => window.removeEventListener("keydown", handlerKeyDown);
     
   }, [keyboard]);
 
@@ -133,7 +138,9 @@ const Modal: React.FC<ModalProps> = (props) => {
               ) : footer === null ? null : (
                 <div className={styles.modalFooter}>
                   <button onClick={onClose}>{cancelText}</button>
-                  <button onClick={handleOk}>{okText}</button>
+                  <button onClick={handleOk} style={{
+                    marginLeft: 10
+                  }}>{okText}</button>
                 </div>
               )}
             </div>
